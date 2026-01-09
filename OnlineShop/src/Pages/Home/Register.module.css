@@ -1,0 +1,71 @@
+
+*{
+    font-family: 'Poppins', sans-serif;
+
+}
+.register-page{
+    min-height: 100vh;
+    background-image: url("/src/Images/20215.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+}
+
+
+.register-container{
+    min-height: 400px;
+    width: 500px;
+    margin: auto;
+    opacity: 0.9;
+    border-radius: 20px;
+    border: solid 2px  rgb(255, 255, 255);
+    background-image: radial-gradient(rgba(255, 161, 161, 0),rgb(206, 87, 87));
+    padding-bottom: 20px;
+}
+.title{
+
+ font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 50px;
+  color: rgb(216, 0, 0);
+  text-align: center;
+  -webkit-text-stroke: 3px rgb(255, 255, 255);
+}
+.inputs{
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+gap: 20px;
+
+}
+
+
+.inputs input{
+    height: 50px;
+    width: 250px;
+    border-radius: 40px;
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.986),rgba(255, 0, 0, 0.411));
+    -webkit-text-stroke: brown 1px;
+    border: black 2px solid;
+}
+.buttonscontainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    gap: 10px;
+}
+
+.buttonscontainer button{
+    width: 150px;
+    height: 50px;
+    background-image: radial-gradient(rgb(255, 5, 5),rgb(94, 13, 13));
+    border-radius: 20px;
+    border:  2px solid white;
+    color: white;
+    font-size: 15px;
+}
