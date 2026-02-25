@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose, { Schema } from "mongoose"
 import hashing from 'bcrypt'
 const structure= new mongoose.Schema({
       
@@ -16,7 +16,17 @@ const structure= new mongoose.Schema({
     password: {
         type : String ,
         required: true,
-        unique: true}
+        unique: true},
+
+    products : 
+        [
+            {
+            type: Schema.Types.ObjectId,
+            ref : 'products'
+            }
+        ]
+        
+       
     
     // orderId: {
     //     type: String,

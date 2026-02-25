@@ -2,7 +2,7 @@ import express, { response } from 'express'
 import Users from '../models/Users.js'
 import { User } from 'lucide-react'
 import hashing from 'bcrypt'
-
+import Products from '../models/Products.js'
 
 const router= express.Router()
 
@@ -189,7 +189,6 @@ router.put('/newpassword',async(req,res)=>{
     }
 })
 
-export default router
 
 
 // Con el postman para recuperar el nombre de usuario
@@ -203,7 +202,7 @@ try {
         })
     }
 
-    const user= await Users.findOne({email})
+    const user= await Users.findOne({email}).populate('products')
  
     // if(!(user.matchemail(email))){
     //     return res.status(400).json({
@@ -218,7 +217,8 @@ try {
     }
 
     res.status(200).json({
-        username: user.username
+        username: user.username,
+        products: user.products
     })
 
 } catch (error) {
@@ -242,3 +242,120 @@ try {
 }
    
 })
+
+router.post('/addproduct' , async (req,res)=>{
+    try {
+        const {username,nombre, descripcion, cant} = req.body
+
+
+        if(!nombre || !descripcion || !cant){
+            return res.status(400).json({
+                message : 'data required'
+            })
+        }
+        // const existproduct = await Products.findOne({nombre})
+
+        // let  p
+        // if(existproduct){
+        //         p = await Products.findOneAndUpdate({nombre: nombre},{
+        //         $inc : {
+        //             cant : cant
+        //         }
+        //     },{new :true})
+        // } else{
+        //     p= await Products.create({nombre,descripcion,cant})
+        // }
+
+
+        const existuser = await Users.findOne({username}).populate('products')
+        let product
+        let user
+        const hasproduct = existuser.products.some(item=>item.nombre===nombre)
+        if(!hasproduct){
+            product = await Products.create({nombre,descripcion,cant})
+             user = await Users.findOneAndUpdate({username: username},
+            {
+                $push : {
+                    products : product
+                }
+            },{new: true}
+        )
+            
+        } else{
+                product = await  Products.findOneAndUpdate({nombre: nombre},
+                {
+                    $inc : {cant: cant}
+                },
+                {new : true}
+            )
+            user = existuser
+        }
+  
+
+
+        res.status(200).json({
+            username:  user.username,
+            products: user.products,
+            message: `product added to the user${user.username} `
+        })
+       
+    } catch (error) {
+        
+        return res.status(500).json({
+            message : error
+        })
+    }
+}
+
+
+)
+
+
+router.delete('/removeproducts' ,async(req,res)=>{
+
+    try {
+        const {username , nombre} = req.body
+
+        let existuser = await Users.findOne({username}).populate('products')
+
+        let product
+        
+        const hasproduct = existuser.products.some(item=> item.nombre===nombre)
+        const productquantity= existuser.products.find(item=>item.nombre===nombre)
+        if(!hasproduct){
+            return res.status(400).json({
+                message: 'You dont have this product'
+            })
+        }else{
+
+            if(productquantity.cant>0){
+                    product = await Products.findOneAndUpdate({nombre: nombre},{
+                        $inc : {cant : -1}
+                    },{new: true})
+            } else{
+                existuser = await Users.findByOneAndUpdate({username: username},{
+                    $pull : {
+                        products : product._id
+                    }
+                },{new : true})
+            }
+        }
+
+        res.status(200).json({
+            username: existuser.username,
+            product: existuser.products,
+            message : 'operation succesfull'
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            message : error
+        })
+    }
+
+
+
+})
+
+
+export default router

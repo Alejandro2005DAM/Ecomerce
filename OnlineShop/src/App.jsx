@@ -34,9 +34,9 @@ function App() {
 // setemail(value)
 // }
   return (
+  <Authprovider>
     <Cartprovider>
       <Favoriteprovider>
-      <Authprovider>
 
       <Router>
           <Routes>
@@ -52,9 +52,10 @@ function App() {
           </Routes>
 
       </Router>
-        </Authprovider>
       </Favoriteprovider>
     </Cartprovider>
+  </Authprovider>
+
   )
 }
 

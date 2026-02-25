@@ -1,12 +1,13 @@
-import { createContext, useState } from "react";
-
+import axios from "axios";
+import { createContext, useContext, useState } from "react";
+import { Authcontext } from "./Authcontext";
 
 const Cartcontext= createContext()
 
 
 
 const Cartprovider=({children})=>{
-
+const {username} = useContext(Authcontext)
 const [cartitems,setcartitems]=useState([])
 const [total,settotal]=useState(0)
 const [able,setable]= useState([]) //Para guardar los id de los productos que se agregan al carrito
@@ -22,6 +23,20 @@ const add=(product,index)=>{
         setcartitems(buy)
         settotal(prev=>prev+product.precio)
     }
+
+    try {
+        const res = axios.post('http://localhost:3000/api/auth/addproduct' ,{
+            username: username,
+            name : product.nombre,
+            description: product.descripcion,
+            cant: product.cant
+        })
+        alert('producto añadido a la base de datos')
+    } catch (error) {
+         console.log(error)
+    }
+
+    
     // if(repeated){
 
     //     const rep= [...cartitems].map(item=>{

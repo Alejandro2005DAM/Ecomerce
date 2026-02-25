@@ -121,6 +121,7 @@ const addproduct=(p,index)=>{
     // const buy= [...listedproducts,p]
     // setlistedproducts(buy)
     // alert('product added to cart')
+    
     add(p,index)
     alert('product added to cart')
 }
