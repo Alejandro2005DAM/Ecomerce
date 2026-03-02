@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { Trash, Plus, Minus } from "lucide-react"
-import Navbar from "../Shop/Navbar"
+import Navbar from "../../Components/Navbar"
 import { Cartcontext } from "../../Context/Cartcontext"
 import { useContext } from "react"
 import { PayPalButtons } from "@paypal/react-paypal-js"

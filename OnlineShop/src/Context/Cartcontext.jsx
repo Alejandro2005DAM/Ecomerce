@@ -12,7 +12,7 @@ const [cartitems,setcartitems]=useState([])
 const [total,settotal]=useState(0)
 const [able,setable]= useState([]) //Para guardar los id de los productos que se agregan al carrito
 // const [cant,setcant]= useState(0)
-const add=(product,index)=>{
+const add=async(product,index)=>{
 
     const repeated= cartitems.some(item=>item.id===product.id)
     if(!repeated){
@@ -25,15 +25,16 @@ const add=(product,index)=>{
     }
 
     try {
-        const res = axios.post('http://localhost:3000/api/auth/addproduct' ,{
+        const res =  await axios.post('http://localhost:3000/api/auth/addproduct' ,{
             username: username,
-            name : product.nombre,
-            description: product.descripcion,
-            cant: product.cant
+            nombre : product.nombre,
+            descripcion: product.descripcion,
+            cant: 1
         })
-        alert('producto añadido a la base de datos')
     } catch (error) {
-         console.log(error)
+         console.log(error.response.data)
+         console.log(error.response.status)
+
     }
 
     
@@ -58,7 +59,7 @@ const add=(product,index)=>{
 }
 
 
-const remove=(product,index)=>{
+const remove=async(product,index)=>{
     const repeat= cartitems.some(item=>item.id===product.id)
 
 
@@ -71,6 +72,18 @@ const remove=(product,index)=>{
 
     }
    
+    try {
+        const res = await axios.delete('http://localhost:3000/api/auth/removeproducts',{
+            data:{
+                username : username,
+                nombre: product.nombre
+            }
+            
+        })
+        alert('producto eliminado de la base de datos')
+    } catch (error) {
+        console.log(error)
+    }
 
 }
 
@@ -84,6 +97,17 @@ const incrementcant=(product)=>{
     )
     setcartitems(updatecant)
     settotal(prev=>prev+product.precio)
+    try {
+        const res= axios.post('http://localhost:3000/api/auth/incrementcant',{
+            username: username,
+            nombre: product.nombre,
+            descripcion: product.descripcion,
+            cant: 1
+        })
+    } catch (error) {
+        console.log(error.response.data)
+        console.log(error.response.status)
+    }
 
 }
 const decrementcant=(product)=>{
@@ -105,6 +129,19 @@ const decrementcant=(product)=>{
         setable(inactive)
     }
     settotal(prev=>prev-product.precio)
+        try {
+        const res= axios.delete('http://localhost:3000/api/auth/decrementcant',{
+            
+            data:{
+                username: username,
+                nombre: product.nombre,
+            }
+        })
+    } catch (error) {
+        console.log(error.response.data)
+        console.log(error.response.status)
+    }
+    
 }
 return(
 

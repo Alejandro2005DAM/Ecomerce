@@ -2,8 +2,9 @@
 import express from 'express'         // Framework web para Node.js
 import { connDB } from './config/db.js' // Configuración de la conexión a MongoDB
 import dotenv from 'dotenv'           // Para manejar variables de entorno
-import router from './routes/Authentication.js' // Rutas de autenticación
-import cors from 'cors'               // Middleware para habilitar CORS
+import router from './routes/Userscontroller.js' // Rutas de autenticación
+import cors from 'cors'      
+import routerproducts from './routes/Productscontroller.js'         // Middleware para habilitar CORS
 // Cargar variables de entorno desde el archivo .env
 dotenv.config()
 
@@ -18,6 +19,7 @@ app.use(cors())                      // Habilita CORS para todas las rutas
 app.use(express.json())              // Permite el parseo de JSON en las peticiones
 
 // Rutas de la API
+app.use('/api/auth', routerproducts)
 app.use('/api/auth', router)         // Todas las rutas de autenticación empiezan con /api/auth
 
 // Ejemplo de ruta básica (actualmente comentada)

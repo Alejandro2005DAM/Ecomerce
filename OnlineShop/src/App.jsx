@@ -8,7 +8,7 @@ import Register from './Pages/Home/Register';
 import Shop from './Pages/Shop/Shop';
 import About from './Pages/About/About';
 import Cart from './Pages/Cart/Cart';
-import Navbar from './Pages/Shop/Navbar';
+// import Navbar from './Pages/Shop/Navbar';
 import { Cartprovider } from './Context/Cartcontext';
 import { Authprovider } from './Context/Authcontext';
 import { Favoriteprovider } from './Context/Favoritecontext';

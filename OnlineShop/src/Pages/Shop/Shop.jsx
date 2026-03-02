@@ -3,7 +3,7 @@ import styles from './Shop.module.css'
 import { HomeIcon, ShoppingCart,Trash,Heart} from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
-import Navbar from "./Navbar"
+import Navbar from "../../Components/Navbar"
 import { Cartcontext } from "../../Context/Cartcontext"
 import { Ontapscale } from "../../Animations/Animations"
 import { color, motion } from "framer-motion"
@@ -123,7 +123,6 @@ const addproduct=(p,index)=>{
     // alert('product added to cart')
     
     add(p,index)
-    alert('product added to cart')
 }
 
 // const quit=(p)=>{

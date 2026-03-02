@@ -1,4 +1,4 @@
-import Navbar from "../Shop/Navbar"
+import Navbar from "../../Components/Navbar"
 import { useContext } from "react"
 import { Favoritecontext } from "../../Context/Favoritecontext"
 import styles from "./Favorites.module.css"
@@ -10,7 +10,7 @@ const{element}=useContext(Favoritecontext)
         
         <div className={styles.bgshop}>
             <Navbar/>
-        <h1>Lista de favoritos</h1>
+        <h1 className={styles.title}>Lista de favoritos</h1>
         <div className={styles.container}>
         {
             element.map((item)=>(

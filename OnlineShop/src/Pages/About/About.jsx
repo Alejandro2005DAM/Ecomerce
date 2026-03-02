@@ -1,5 +1,4 @@
-import Navbar from "../Shop/Navbar";
-// import { Bar } from "../Shop/Shop"
+import Navbar from '../../Components/Navbar'// import { Bar } from "../Shop/Shop"
 import styles from './About.module.css'
 
 function About() {

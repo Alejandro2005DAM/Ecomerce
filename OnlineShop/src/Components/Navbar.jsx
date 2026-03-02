@@ -2,10 +2,10 @@ import styles from './Navbar.module.css'
 import { HomeIcon, ShoppingCart,Trash,User } from "lucide-react"
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-import { Authcontext } from '../../Context/Authcontext'
+import { Authcontext } from '../Context/Authcontext'
 import { useContext, useEffect } from 'react'
 import axios from 'axios'
-import { Onhoverscale } from '../../Animations/Animations'
+import { Onhoverscale } from '../Animations/Animations'
 import { motion } from "framer-motion"
 
 function Navbar(){

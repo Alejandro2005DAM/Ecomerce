@@ -3,7 +3,7 @@ import Users from '../models/Users.js'
 import { User } from 'lucide-react'
 import hashing from 'bcrypt'
 import Products from '../models/Products.js'
-
+import jwt from 'jsonwebtoken'
 const router= express.Router()
 
 
@@ -29,6 +29,7 @@ router.post('/register', async (req,res)=>{
         })
     }
 
+
     const newuser= Users.create({username,email,password}) 
         res.status(200).json({
             id: newuser._id,
@@ -36,6 +37,7 @@ router.post('/register', async (req,res)=>{
             username: newuser.username,
             message: 'user created succesfully'
         })     
+
 
     } catch (error) {
         console.log(error)
@@ -68,11 +70,17 @@ try {
             message: 'password doesn`t match'
         })
     }
+    const token = jwt.sign(
+        {id: user._id},
+        process.env.JWW_SECRET,
+        {expiresIn: '10h'}
+    )
 
     res.status(200).json({
         id: user._id,
         email: user.email,
-        username:  user.username
+        username:  user.username,
+        token: token
     })
 } catch (error) {
     console.log(error)
@@ -244,119 +252,120 @@ try {
    
 })
 
-router.post('/addproduct' , async (req,res)=>{
-    try {
-        const {username,nombre, descripcion, cant} = req.body
+// router.post('/addproduct' , async (req,res)=>{
+//     try {
+//         const {username,nombre, descripcion, cant} = req.body
 
 
-        if(!nombre || !descripcion || !cant){
-            return res.status(400).json({
-                message : 'data required'
-            })
-        }
-        // const existproduct = await Products.findOne({nombre})
+//         if(!nombre || !descripcion || !cant){
+//             return res.status(400).json({
+//                 message : 'data required'
+//             })
+//         }
+//         // const existproduct = await Products.findOne({nombre})
 
-        // let  p
-        // if(existproduct){
-        //         p = await Products.findOneAndUpdate({nombre: nombre},{
-        //         $inc : {
-        //             cant : cant
-        //         }
-        //     },{new :true})
-        // } else{
-        //     p= await Products.create({nombre,descripcion,cant})
-        // }
+//         // let  p
+//         // if(existproduct){
+//         //         p = await Products.findOneAndUpdate({nombre: nombre},{
+//         //         $inc : {
+//         //             cant : cant
+//         //         }
+//         //     },{new :true})
+//         // } else{
+//         //     p= await Products.create({nombre,descripcion,cant})
+//         // }
 
 
-        const existuser = await Users.findOne({username}).populate('products')
-        let product
-        let user
-        const hasproduct = existuser.products.some(item=>item.nombre===nombre)
-        if(!hasproduct){
-            product = await Products.create({nombre,descripcion,cant})
-             user = await Users.findOneAndUpdate({username: username},
-            {
-                $push : {
-                    products : product
-                }
-            },{new: true}
-        )
+//         const existuser = await Users.findOne({username}).populate('products')
+//         let product
+//         let user
+//         const hasproduct = existuser.products.some(item=>item.nombre===nombre)
+//         if(!hasproduct){
+//             product = await Products.create({nombre,descripcion,cant})
+//              user = await Users.findOneAndUpdate({username: username},
+//             {
+//                 $push : {
+//                     products : product
+//                 }
+//             },{new: true}
+//         )
             
-        } else{
-                product = await  Products.findOneAndUpdate({nombre: nombre},
-                {
-                    $inc : {cant: cant}
-                },
-                {new : true}
-            )
-            user = existuser
-        }
+//         } else{
+//                 product = await  Products.findOneAndUpdate({nombre: nombre},
+//                 {
+//                     $inc : {cant: cant}
+//                 },
+//                 {new : true}
+//             )
+//             user = existuser
+//         }
   
 
 
-        res.status(200).json({
-            username:  user.username,
-            products: user.products,
-            message: `product added to the user${user.username} `
-        })
+//         res.status(200).json({
+//             username:  user.username,
+//             products: user.products,
+//             message: `product added to the user${user.username} `
+//         })
        
-    } catch (error) {
+//     } catch (error) {
         
-        return res.status(500).json({
-            message : error
-        })
-    }
-}
+//         return res.status(500).json({
+//             message : error
+//         })
+//     }
+// }
 
 
-)
+// )
 
 
-router.delete('/removeproducts' ,async(req,res)=>{
+// router.delete('/removeproducts' ,async(req,res)=>{
 
-    try {
-        const {username , nombre} = req.body
+//     try {
+//         const {username , nombre} = req.body
 
-        let existuser = await Users.findOne({username}).populate('products')
+//         let existuser = await Users.findOne({username}).populate('products')
 
-        let product
+//         let product
         
-        const hasproduct = existuser.products.some(item=> item.nombre===nombre)
-        const productquantity= existuser.products.find(item=>item.nombre===nombre)
-        if(!hasproduct){
-            return res.status(400).json({
-                message: 'You dont have this product'
-            })
-        }else{
+//         const hasproduct = existuser.products.some(item=> item.nombre===nombre)
+//         const productquantity= existuser.products.find(item=>item.nombre===nombre)
+//         if(!hasproduct){
+//             return res.status(400).json({
+//                 message: 'You dont have this product'
+//             })
+//         }else{
 
-            if(productquantity.cant>0){
-                    product = await Products.findOneAndUpdate({nombre: nombre},{
-                        $inc : {cant : -1}
-                    },{new: true})
-            } else{
-                existuser = await Users.findByOneAndUpdate({username: username},{
-                    $pull : {
-                        products : product._id
-                    }
-                },{new : true})
-            }
-        }
+//             if(productquantity.cant>0){
+//                     product = await Products.findOneAndUpdate({nombre: nombre},{
+//                         $inc : {cant : -1}
+//                     },{new: true})
+//             } else{
+//                 existuser = await Users.findOneAndUpdate({username: username},{
+//                     $pull : {
+//                         products : product._id
+//                     }
+//                 },{new : true})
+//                 // product = await Products.deleteOne({nombre})
+//             }
+//         }
 
-        res.status(200).json({
-            username: existuser.username,
-            product: existuser.products,
-            message : 'operation succesfull'
-        })
+//         res.status(200).json({
+//             username: existuser.username,
+//             product: existuser.products,
+//             message : 'operation succesfull'
+//         })
         
-    } catch (error) {
-        return res.status(500).json({
-            message : error
-        })
-    }
+//     } catch (error) {
+//         return res.status(500).json({
+//             message : error
+//         })
+//     }
 
 
 
-})
+// })
 
 
 export default router

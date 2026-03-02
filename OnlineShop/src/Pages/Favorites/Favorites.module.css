@@ -6,7 +6,7 @@
     min-height: 100vh;
     overflow-x: auto;
 }
-.bgshop h1{
+.bgshop .title{
     text-align: center;
     -webkit-text-stroke: rgb(255, 255, 255) 1px;
     font-size: 60px;

@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useContext } from "react"
 import { Cartcontext } from "../../Context/Cartcontext"
+import { Authcontext } from "../../Context/Authcontext"
 function Paypalbutton({totalpay}){
 const navigate= useNavigate()
+const{username}= useContext(Authcontext)
 const {cartitems} = useContext(Cartcontext)
     return(
         <div className={styles.container} style={{display: cartitems.length===0 ? 'none' : 'flex'}}>
@@ -35,7 +37,9 @@ const {cartitems} = useContext(Cartcontext)
             fetch('http://localhost:3000/api/auth/payment',{
                 method: 'POST',
                 body: JSON.stringify({
-                    orderID: id
+                    orderID: id,
+                    username: username,
+                    total: totalpay
                 })
             }).then((response)=>{
                 if(!response.ok){
