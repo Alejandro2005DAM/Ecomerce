@@ -4,7 +4,8 @@ import { connDB } from './config/db.js' // Configuración de la conexión a Mong
 import dotenv from 'dotenv'           // Para manejar variables de entorno
 import router from './routes/Userscontroller.js' // Rutas de autenticación
 import cors from 'cors'      
-import routerproducts from './routes/Productscontroller.js'         // Middleware para habilitar CORS
+import routerproducts from './routes/Productscontroller.js'  
+import routerpayments from './routes/Paymentscontroller.js'       // Middleware para habilitar CORS
 // Cargar variables de entorno desde el archivo .env
 dotenv.config()
 
@@ -20,7 +21,8 @@ app.use(express.json())              // Permite el parseo de JSON en las peticio
 
 // Rutas de la API
 app.use('/api/auth', routerproducts)
-app.use('/api/auth', router)         // Todas las rutas de autenticación empiezan con /api/auth
+app.use('/api/auth', router)  
+app.use('/api/auth',routerpayments)    // Todas las rutas de autenticación empiezan con /api/auth
 
 // Ejemplo de ruta básica (actualmente comentada)
 // app.get('/onlineshop', (req, res)=>{

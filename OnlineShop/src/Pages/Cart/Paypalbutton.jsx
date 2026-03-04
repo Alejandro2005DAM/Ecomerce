@@ -34,7 +34,7 @@ const {cartitems} = useContext(Cartcontext)
             if(order.purchase_units[0].amount.value==='0'){
                 navigate('/shop')
             }
-            fetch('http://localhost:3000/api/auth/payment',{
+            fetch('http://localhost:3000/api/auth/addpayment',{
                 method: 'POST',
                 body: JSON.stringify({
                     orderID: id,
@@ -56,6 +56,9 @@ const {cartitems} = useContext(Cartcontext)
             //     console.log(error)
             // }
         
+        }}
+        onCancel={async(data)=>{
+            navigate('/shop')
         }}>
         </PayPalButtons>
         </div> 

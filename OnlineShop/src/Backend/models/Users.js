@@ -24,8 +24,14 @@ const structure= new mongoose.Schema({
             type: Schema.Types.ObjectId,
             ref : 'products'
             }
-        ]
-        
+        ],
+    // payments: [
+    //     {
+    //         type:Schema.Types.ObjectId,
+    //         ref: 'payments'
+    //     }
+    // ]
+
        
     
     // orderId: {
