@@ -8,6 +8,8 @@ import { Cartcontext } from "../../Context/Cartcontext"
 import { Ontapscale } from "../../Animations/Animations"
 import { color, motion } from "framer-motion"
 import { Favoritecontext } from "../../Context/Favoritecontext"
+import { MoonLoader } from "react-spinners"
+import { Authcontext } from "../../Context/Authcontext"
 // export const Bar=({onnavigate,changecart})=>{
 //     return(
 //       <nav className={styles.navlinks}>
@@ -31,21 +33,37 @@ const [lista,setlista]= useState([])
 const [text,setext]= useState('') 
 const [cart,setcart]= useState(false)
 const [option,setoption]=useState('precio')
+const [loading ,setloading]= useState(false)
 // const [listedproducts,setlistedproducts]=useState([]) cart
 const [filtered,setfiltered]=useState([])
 const [priceorder, setpriceorder]=useState('Price ASC')
 const [buttonbg,setbuttonbg]=useState({backgroundImage: 'radial-gradient(rgb(216, 41, 41),rgb(122, 24, 24))'})
 // const [heartcolor,setheartcolor]= useState({color: 'red'})
+const {isauthenticathed} = useContext(Authcontext)
 useEffect(()=>{
     const cargar=()=>{
-    fetch('data.json')
+  
+    const timer= setTimeout(() => {
+          fetch('data.json')
     .then((data)=>data.json())
-    .then((products)=>setlista(products.productos))
+    .then((products)=>setlista(products.productos))  
+        setloading(true)
+    }, 5000);
+    return ()=> clearTimeout(timer)
+    
     }
 
     cargar()
 },[])
 
+const Loader= ()=>{
+if(!loading){
+    return (<div className={styles.loadingsection}>
+        <MoonLoader className={styles.iconloader} size={200} color="red"/>
+        <h2 className={styles.warning}>Cargando productos</h2>
+    </div>)
+}
+}
 
 const optionrmanager=(opc)=>{
         setoption(opc)
@@ -131,7 +149,7 @@ const addproduct=(p,index)=>{
 // }
 
     return(
-        <>{!cart &&
+        <>
             <div className={styles.bgshop}>
                 {/* <nav className={styles.navlinks}>
                     <button className={styles.home} onClick={()=>navigate('/login')}><HomeIcon style={{color: 'red'}}/></button>
@@ -156,7 +174,9 @@ const addproduct=(p,index)=>{
 
                     </select>
                 </div>
-                
+                    {
+                        Loader()
+                    }
                 <div className={styles['container-products']}>
                     {
                    (text==='' ? lista: filtered).map((item,index)=>(
@@ -165,16 +185,16 @@ const addproduct=(p,index)=>{
                                 <img src={item.imagen} alt="" />
                                 <p className={styles.price}>{item.precio} €</p>
                                 <p className={styles.description}>{item.descripcion}</p>
-                                <button onClick={()=>addproduct(item,index+1)} disabled={able.includes(item.id)}>  {able.includes(item.id) ? 'Añadido' : 'Añadir'}</button>
+                                <button onClick={()=>addproduct(item,index+1)} disabled={able.includes(item.id) || !isauthenticathed}>  {able.includes(item.id) ? 'Añadido' : 'Añadir'}</button>
                                 <Heart onClick={()=>marklike(item)}  color={like.includes(item.id)? 'red': 'black'} className={styles.Heart} size={25}/>
                             </motion.div>
                         ))
                     }
 
                 </div>
-
+            
             </div>
-            }
+            
             {/* {
                 cart &&
                 <div>

@@ -5,6 +5,7 @@
     background-attachment: fixed;
     min-height: 100vh;
     overflow-x: auto;
+    position: relative;
 }
 
 .home{
@@ -73,6 +74,22 @@ margin-left: 120px;
     font-weight: 500;
     padding: 0.6em, 1.2em; */
 }
+
+/* .iconloader{
+    position: absolute;
+    left: 40vw;
+    top: 15vh;
+}
+.warning{
+    position: absolute;
+    left: 40vw;
+    top: 10vh;
+} */
+ .loadingsection{
+    position: absolute;
+    left: 40vw;
+    top: 35vh;
+ }
 .card {
 
     width: 360px;

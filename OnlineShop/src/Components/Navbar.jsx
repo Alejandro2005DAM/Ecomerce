@@ -1,5 +1,5 @@
 import styles from './Navbar.module.css'
-import { HomeIcon, ShoppingCart,Trash,User } from "lucide-react"
+import { HomeIcon, ShoppingCart,Trash,User,BadgeQuestionMark } from "lucide-react"
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { Authcontext } from '../Context/Authcontext'
@@ -9,7 +9,7 @@ import { Onhoverscale } from '../Animations/Animations'
 import { motion } from "framer-motion"
 
 function Navbar(){
-const {email,isauthenticathed,username}= useContext(Authcontext)
+const {email,isauthenticathed,username,setauthenticated}= useContext(Authcontext)
 const navigate= useNavigate()
 
 useEffect(()=>{
@@ -29,6 +29,8 @@ try {
     })
     alert('account deleted')
     navigate('/login')
+    setauthenticated(false)
+    
 } catch (error) {
     console.log(error)
 }
@@ -52,8 +54,14 @@ try {
                         <Link to='/cart'><ShoppingCart color="rgb(1,1,1)" size={70}/></Link>
                         <h3>{isauthenticathed ? username : "Invited"}</h3>
                         <Trash color='rgba(255, 255, 255, 1)' size={70} onClick={deleteaccount}/>
+                        {   
+                        !isauthenticathed&&(
+                        <BadgeQuestionMark  className={styles.user} size={70} color='black'/>
+                        )
+                        }
+                        { isauthenticathed &&
                         <Link to='/myaccount'><User className={styles.user} size={70} color='black'/></Link>
-                        
+                        }
                     </div>
 
 
