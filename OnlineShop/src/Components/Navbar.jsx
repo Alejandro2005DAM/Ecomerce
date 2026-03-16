@@ -45,7 +45,7 @@ function Navbar() {
 
     return (
         <nav className={styles.navlinks}>
-            <motion.button className={styles.home} onClick={() => backtologin()} {...Onhoverscale}><HomeIcon style={{ color: 'red' }} /></motion.button>
+            <motion.button className={styles.home} onClick={() => backtologin()} {...Onhoverscale}><HomeIcon style={{ color: '#ff416c' }} size={25} /></motion.button>
             <h1 className={styles.title}>TechShop</h1>
             <div className={styles.elements}>
                 <Link to='/favorites' className={styles.link} ><motion.p{...Onhoverscale}>Favoritos</motion.p></Link>
@@ -56,16 +56,16 @@ function Navbar() {
                 {/* <h3>{email}</h3> */}
             </div>
             <div className={styles.subelements}>
-                <Link to='/cart'><ShoppingCart color="rgb(1,1,1)" size={70} /></Link>
+                <Link to='/cart' className={styles.cart}><ShoppingCart size={70} /></Link>
                 <h3>{isauthenticathed ? username : "Invited"}</h3>
                 <Trash color='rgba(255, 255, 255, 1)' size={70} onClick={deleteaccount} />
                 {
                     !isauthenticathed && (
-                        <BadgeQuestionMark className={styles.user} size={70} color='black' />
+                        <BadgeQuestionMark className={styles.user} size={30} color='black' />
                     )
                 }
                 {isauthenticathed &&
-                    <Link to='/myaccount'><User className={styles.user} size={70} color='black' /></Link>
+                    <Link to='/myaccount'><User className={styles.user} size={30} color='black' /></Link>
                 }
             </div>
 
