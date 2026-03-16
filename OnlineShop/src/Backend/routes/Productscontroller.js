@@ -4,16 +4,16 @@ import express from 'express'
 import router from "./Userscontroller.js";
 import { User } from "lucide-react";
 
-const routerproducts= express.Router()
+const routerproducts = express.Router()
 
-routerproducts.post('/addproduct' , async (req,res)=>{
+routerproducts.post('/addproduct', async (req, res) => {
     try {
-        const {username,nombre, descripcion, cant} = req.body
+        const { username, nombre, descripcion, cant } = req.body
 
 
-        if(!nombre || !descripcion || !cant){
+        if (!nombre || !descripcion || !cant) {
             return res.status(400).json({
-                message : 'data required'
+                message: 'data required'
             })
         }
         // const existproduct = await Products.findOne({nombre})
@@ -30,42 +30,40 @@ routerproducts.post('/addproduct' , async (req,res)=>{
         // }
 
 
-        const existuser = await Users.findOne({username}).populate('products')
+        let existuser = await Users.findOne({ username }).populate('products')
         let product
-        let user
-        const hasproduct = existuser.products.some(item=>item.nombre===nombre)
-        if(!hasproduct){
-            product = await Products.create({nombre,descripcion,cant})
-             user = await Users.findOneAndUpdate({username: username},
-            {
-                $push : {
-                    products : product
-                }
-            },{new: true}
-        )
-            
-        } else{
-                product = await  Products.findOneAndUpdate({nombre: nombre},
+        const hasproduct = existuser.products.some(item => item.nombre === nombre)
+        if (!hasproduct) {
+            product = await Products.create({ nombre, descripcion, cant })
+            existuser = await Users.findOneAndUpdate({ username: username },
                 {
-                    $inc : {cant: cant}
-                },
-                {new : true}
+                    $push: {
+                        products: product
+                    }
+                }, { new: true }
             )
-            user = existuser
+
+        } else {
+            product = await Products.findOneAndUpdate({ nombre: nombre },
+                {
+                    $inc: { cant: cant }
+                },
+                { new: true }
+            )
         }
-  
 
 
-        res.status(200).json({
-            username:  user.username,
-            products: user.products,
-            message: `product added to the user${user.username} `
+
+        res.status(201).json({
+            username: existuser.username,
+            products: existuser.products,
+            message: `product added to the user${existuser.username} `
         })
-       
+
     } catch (error) {
-        
+
         return res.status(500).json({
-            message : error
+            message: error
         })
     }
 }
@@ -74,89 +72,90 @@ routerproducts.post('/addproduct' , async (req,res)=>{
 )
 
 
-routerproducts.delete('/removeproducts' ,async(req,res)=>{
+routerproducts.delete('/removeproducts', async (req, res) => {
 
     try {
-        const {username , nombre} = req.body
+        const { username, nombre } = req.body
 
-        if(!username || !nombre){
+        if (!username || !nombre) {
             return res.status(400).json({
-                message : 'data required'
+                message: 'data required'
             })
         }
-        let existuser = await Users.findOne({username}).populate('products')
+        let existuser = await Users.findOne({ username }).populate('products')
 
         let product
-        
-        const hasproduct = existuser.products.some(item=> item.nombre===nombre)
-        const productquantity= existuser.products.find(item=>item.nombre===nombre)
-        if(!hasproduct){
+
+        const hasproduct = existuser.products.some(item => item.nombre === nombre)
+        const productquantity = existuser.products.find(item => item.nombre === nombre)
+        if (!hasproduct) {
             return res.status(400).json({
                 message: 'You dont have this product'
             })
-        }else{
+        } else {
 
             // if(productquantity.cant>0){
-                    // product = await Products.findOneAndUpdate({nombre: nombre},{
-                    //     $set : {cant : 0}
-                    // },{new: true})
+            // product = await Products.findOneAndUpdate({nombre: nombre},{
+            //     $set : {cant : 0}
+            // },{new: true})
             // } else{
-                const productstoremove = existuser.products.find(item=>item.nombre=nombre)
-                existuser = await Users.findOneAndUpdate({username: username},{
-                    $pull : {
-                        products : productstoremove._id
-                    }
-                },{new : true})
-                // product = await Products.deleteOne({nombre})
+            const productstoremove = existuser.products.find(item => item.nombre = nombre)
+            existuser = await Users.findOneAndUpdate({ username: username }, {
+                $pull: {
+                    products: productstoremove._id
+                }
+            }, { new: true })
+            // product = await Products.deleteOne({nombre})
+            product = await Products.deleteOne({ nombre })
             // }
         }
 
-        res.status(200).json({
+        res.status(201).json({
             username: existuser.username,
             product: existuser.products,
-            message : 'operation succesfull'
+            message: 'operation succesfull'
         })
-        
+
     } catch (error) {
         return res.status(500).json({
-            message : error
+            message: error
         })
     }
 
 })
 
 //para incrementar cantidad
-routerproducts.post('/incrementcant',async(req,res)=>{
+routerproducts.post('/incrementcant', async (req, res) => {
 
     try {
-    const {username,nombre,cant}= req.body       
+        const { username, nombre, cant } = req.body
 
-    if(!username || !nombre || !cant){
-        return res.status(400).json({
-            message : 'data required'
-        })
-    }
-    let existuser = await Users.findOne({username}).populate('products')
-    
-    const hasproduct = existuser.products.some(item=>item.nombre===nombre)
-    let product
-    if(hasproduct){
-       product = await Products.findOneAndUpdate({nombre: nombre},
-        {
-            $inc: {cant:cant }
+        if (!username || !nombre || !cant) {
+            return res.status(400).json({
+                message: 'data required'
+            })
         }
+        let existuser = await Users.findOne({ username }).populate('products')
 
-       ) 
-    } else{
-        return res.status(400).json({
-            message :'you don`t have this product'
+        const hasproduct = existuser.products.some(item => item.nombre === nombre)
+        let product
+        if (hasproduct) {
+            product = await Products.findOneAndUpdate({ nombre: nombre },
+                {
+                    $inc: { cant: cant }
+                }
+
+            )
+        } else {
+            return res.status(400).json({
+                message: 'you don`t have this product'
+            })
+        }
+        res.status(201).json({
+            nombre: product.nombre,
+            product: existuser.products,
+            message: '!quantity incremented!'
         })
-    }
-    res.status(200).json({
-        nombre: product.nombre,
-        product: existuser.products,
-        message : '!quantity incremented!'
-    })
     } catch (error) {
         return res.status(500).json({
             message: error
@@ -166,49 +165,52 @@ routerproducts.post('/incrementcant',async(req,res)=>{
 
 })
 
-router.delete('/decrementcant', async(req,res)=>{
+router.delete('/decrementcant', async (req, res) => {
 
     try {
-          const {username, nombre} = req.body
+        const { username, nombre } = req.body
 
-    let existuser = await Users.findOne({username}).populate('products')
-    const hasproduct= existuser.products.some(item=>item.nombre===nombre)
-    const quantity= existuser.products.find(item=>item.nombre===nombre)
-    let product
-    if(hasproduct){
-        if(quantity.cant>0){
-            product = await Products.findOneAndUpdate({nombre: nombre},{
-            $inc : {cant: -1}
-        },{new : true})
-        }else{
-            const remove= existuser.products.find(item=>item.nombre===nombre)
-            existuser= await Users.findOneAndUpdate({username: username},{
-                $pull : {
-                    products: remove._id
-                }
-            },{new : true})
-            
+        let existuser = await Users.findOne({ username }).populate('products')
+        const hasproduct = existuser.products.some(item => item.nombre === nombre)
+        const quantity = existuser.products.find(item => item.nombre === nombre)
+        let product
+        if (hasproduct) {
+
+            if (quantity.cant > 1) {
+                product = await Products.findOneAndUpdate({ nombre: nombre }, {
+                    $inc: { cant: -1 }
+                }, { new: true })
+            } else {
+                const remove = existuser.products.find(item => item.nombre === nombre)
+                existuser = await Users.findOneAndUpdate({ username: username }, {
+                    $pull: {
+                        products: remove._id
+                    }
+                }, { new: true })
+                product = await Products.findOneAndDelete({ nombre })
+
+            }
+
+
+        } else {
+            return res.status(400).json({
+                username: existuser.username,
+                message: 'you don`t have this product'
+            })
         }
-    
 
-    }else{
-        return res.status(400).json({
+        res.status(201).json({
             username: existuser.username,
-            message : 'you don`t have this product'
+            products: existuser.products,
+            name: product.nombre,
+            message: '!quantity decreased!'
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error
         })
     }
 
-        res.status(200).json({
-            username: existuser.username,
-            products: existuser.products,
-            message : '!quantity decreased!'
-        })      
-    } catch (error) {
-        return res.status(500).json({
-            message : error
-        })   
-    }
-  
 })
 
 
