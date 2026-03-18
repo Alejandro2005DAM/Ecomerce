@@ -1,158 +1,163 @@
 import axios from "axios";
 import { createContext, useContext, useState } from "react";
 import { Authcontext } from "./Authcontext";
-
-const Cartcontext= createContext()
-
-
-
-const Cartprovider=({children})=>{
-const {username} = useContext(Authcontext)
-const [cartitems,setcartitems]=useState([])
-const [total,settotal]=useState(0)
-const [able,setable]= useState([]) //Para guardar los id de los productos que se agregan al carrito
-// const [cant,setcant]= useState(0)
-const add=async(product,index)=>{
-
-    const repeated= cartitems.some(item=>item.id===product.id)
-    if(!repeated){
-        const active= [...able,product.id]
-        setable(active)
-        const buy= [...cartitems,{...product, cant: 1}]
-
-        setcartitems(buy)
-        settotal(prev=>prev+product.precio)
-    }
-
-    try {
-        const res =  await axios.post('http://localhost:3000/api/auth/addproduct' ,{
-            username: username,
-            nombre : product.nombre,
-            descripcion: product.descripcion,
-            cant: 1
-        })
-    } catch (error) {
-         console.log(error.response.data)
-         console.log(error.response.status)
-
-    }
-
-    
-    // if(repeated){
-
-    //     const rep= [...cartitems].map(item=>{
-    //         return item.id===product.id ? {...item , cant: item.cant+1} : item
-    //     })
-    //     setcartitems(rep)
-    //     settotal(prev=>prev+product.precio)
-    // }else{
-    //     const buy= [...cartitems,{...product,cant: 1}]
-    //     setcartitems(buy)
-    //     settotal(prev=>prev+product.precio)
-        
-    // }
-
-    
-
-    
-  
-}
+import { productservice } from "../Backend/services/productservice";
+const Cartcontext = createContext()
 
 
-const remove=async(product,index)=>{
-    const repeat= cartitems.some(item=>item.id===product.id)
+
+const Cartprovider = ({ children }) => {
+    const { username } = useContext(Authcontext)
+    const [cartitems, setcartitems] = useState([])
+    const [total, settotal] = useState(0)
+    const [able, setable] = useState([]) //Para guardar los id de los productos que se agregan al carrito
+    // const [cant,setcant]= useState(0)
+    const add = async (product, index) => {
+
+        const repeated = cartitems.some(item => item.id === product.id)
+        if (!repeated) {
+            const active = [...able, product.id]
+            setable(active)
+            const buy = [...cartitems, { ...product, cant: 1 }]
+
+            setcartitems(buy)
+            settotal(prev => prev + product.precio)
+        }
+
+        productservice.onadd(username, product)
+        // try {
+        //     const res = await axios.post('http://localhost:3000/api/auth/addproduct', {
+        //         username: username,
+        //         nombre: product.nombre,
+        //         descripcion: product.descripcion,
+        //         precio: product.precio,
+        //         cant: 1
+        //     })
+        // } catch (error) {
+        //     console.log(error.response.data)
+        //     console.log(error.response.status)
+
+        // }
 
 
-    if(repeat){
-        const quit= cartitems.filter(item=>item.id!==product.id)
-        setcartitems(quit)
-        settotal(prev=>prev-(product.precio*product.cant))
-        const inactive= able.filter(item=>item!==product.id)
-        setable(inactive)
+        // if(repeated){
+
+        //     const rep= [...cartitems].map(item=>{
+        //         return item.id===product.id ? {...item , cant: item.cant+1} : item
+        //     })
+        //     setcartitems(rep)
+        //     settotal(prev=>prev+product.precio)
+        // }else{
+        //     const buy= [...cartitems,{...product,cant: 1}]
+        //     setcartitems(buy)
+        //     settotal(prev=>prev+product.precio)
+
+        // }
+
+
+
+
 
     }
-   
-    try {
-        const res = await axios.delete('http://localhost:3000/api/auth/removeproducts',{
-            data:{
-                username : username,
-                nombre: product.nombre
-            }
-            
-        })
-        alert('producto eliminado de la base de datos')
-    } catch (error) {
-        console.log(error)
+
+
+    const remove = async (product, index) => {
+        const repeat = cartitems.some(item => item.id === product.id)
+
+
+        if (repeat) {
+            const quit = cartitems.filter(item => item.id !== product.id)
+            setcartitems(quit)
+            settotal(prev => prev - (product.precio * product.cant))
+            const inactive = able.filter(item => item !== product.id)
+            setable(inactive)
+
+        }
+        productservice.ondelete(username, product)
+        // try {
+        //     const res = await axios.delete('http://localhost:3000/api/auth/removeproducts', {
+        //         data: {
+        //             username: username,
+        //             nombre: product.nombre
+        //         }
+
+        //     })
+        //     alert('producto eliminado de la base de datos')
+        // } catch (error) {
+        //     console.log(error)
+        // }
+
     }
 
-}
-
-const incrementcant=(product)=>{
+    const incrementcant = (product) => {
 
 
-    
 
-    const updatecant=[...cartitems].map((item)=>
-    item.id==product.id ? {...item, cant: item.cant+1}: item
+
+        const updatecant = [...cartitems].map((item) =>
+            item.id == product.id ? { ...item, cant: item.cant + 1 } : item
+        )
+        setcartitems(updatecant)
+        settotal(prev => prev + product.precio)
+        productservice.onincrement(username, product)
+        // try {
+        //     const res = axios.post('http://localhost:3000/api/auth/incrementcant', {
+        //         username: username,
+        //         nombre: product.nombre,
+        //         descripcion: product.descripcion,
+        //         cant: 1
+        //     })
+        // } catch (error) {
+        //     console.log(error.response.data)
+        //     console.log(error.response.status)
+        // }
+
+    }
+    const decrementcant = (product) => {
+        const cuantity = cartitems.find(item => item.id === product.id)
+
+
+        if (cuantity.cant > 1) {
+            const updatecant = [...cartitems].map(item => item.id === product.id
+                ? { ...item, cant: item.cant - 1 } : item
+            )
+            setcartitems(updatecant)
+
+
+        } else {
+            const updated = cartitems.filter(item => item.id !== product.id)
+
+            setcartitems(updated)
+            const inactive = able.filter(item => item !== product.id)
+            setable(inactive)
+        }
+        settotal(prev => prev - product.precio)
+
+        productservice.ondecrement(username, product)
+        // try {
+        //     const res = axios.delete('http://localhost:3000/api/auth/decrementcant', {
+
+        //         data: {
+        //             username: username,
+        //             nombre: product.nombre,
+        //         }
+        //     })
+        // } catch (error) {
+        //     console.log(error.response.data)
+        //     console.log(error.response.status)
+        // }
+
+    }
+    return (
+
+        <Cartcontext.Provider
+            value={{
+                cartitems, remove, add, total, incrementcant, decrementcant, able,
+            }}>
+            {children}
+        </Cartcontext.Provider>
     )
-    setcartitems(updatecant)
-    settotal(prev=>prev+product.precio)
-    try {
-        const res= axios.post('http://localhost:3000/api/auth/incrementcant',{
-            username: username,
-            nombre: product.nombre,
-            descripcion: product.descripcion,
-            cant: 1
-        })
-    } catch (error) {
-        console.log(error.response.data)
-        console.log(error.response.status)
-    }
-
-}
-const decrementcant=(product)=>{
-    const cuantity= cartitems.find(item=>item.id===product.id)
-
-
-    if(cuantity.cant>1){
-        const updatecant=[...cartitems].map(item=>item.id===product.id
-        ?{...item , cant: item.cant-1}: item
-    )
-    setcartitems(updatecant)
-        
-
-    }else{
-        const updated=cartitems.filter(item=>item.id!==product.id)
-
-        setcartitems(updated)
-        const inactive= able.filter(item=>item!==product.id)
-        setable(inactive)
-    }
-    settotal(prev=>prev-product.precio)
-        try {
-        const res= axios.delete('http://localhost:3000/api/auth/decrementcant',{
-            
-            data:{
-                username: username,
-                nombre: product.nombre,
-            }
-        })
-    } catch (error) {
-        console.log(error.response.data)
-        console.log(error.response.status)
-    }
-    
-}
-return(
-
-    <Cartcontext.Provider
-    value={{
-        cartitems,remove,add,total,incrementcant,decrementcant,able,
-    }}>
-    {children}
-    </Cartcontext.Provider>
-)
 
 
 }
-export {Cartcontext, Cartprovider}
+export { Cartcontext, Cartprovider }

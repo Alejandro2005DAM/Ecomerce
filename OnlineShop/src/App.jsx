@@ -15,46 +15,48 @@ import { Favoriteprovider } from './Context/Favoritecontext';
 import Favorites from './Pages/Favorites/Favorites';
 import Myaccount from './Pages/Myaccount/Myaccount';
 import Changepwd from './Pages/Changepwd/Changepwd';
+import Historypays from './Pages/Historypays/Histortypays';
 function App() {
   // const [count, setCount] = useState(0)
-// const [listedproducts,setlistedproducts]=useState([])
-// const add= (product)=>{
+  // const [listedproducts,setlistedproducts]=useState([])
+  // const add= (product)=>{
 
-//   const buy= [...listedproducts,product]
-//   setlistedproducts(buy)
-// }
+  //   const buy= [...listedproducts,product]
+  //   setlistedproducts(buy)
+  // }
 
-// const remove=(product)=>{
+  // const remove=(product)=>{
 
-//   const del= listedproducts.filter((item)=>item.id!==product.id)
-//   setlistedproducts(del)
-// }
+  //   const del= listedproducts.filter((item)=>item.id!==product.id)
+  //   setlistedproducts(del)
+  // }
 
-// const writemail=(value)=>{
-// setemail(value)
-// }
+  // const writemail=(value)=>{
+  // setemail(value)
+  // }
   return (
-  <Authprovider>
-    <Cartprovider>
-      <Favoriteprovider>
+    <Authprovider>
+      <Cartprovider>
+        <Favoriteprovider>
 
-      <Router>
-          <Routes>
+          <Router>
+            <Routes>
               <Route path='/' element={<Navigate to="/login" replace />}></Route>
-              <Route path='/login' element={<Login/>}></Route>
-              <Route path='/register' element={<Register/>}></Route>
-              <Route path='/shop' element={<Shop/>}></Route>
-              <Route path='/about' element={<About/>} ></Route>
-              <Route path='/cart' element={<Cart/>}></Route>
-              <Route path='/favorites' element={<Favorites/>} ></Route>
-              <Route path='/myaccount' element={<Myaccount/>}></Route>
-              <Route path='/changepwd' element={<Changepwd/>}></Route>
-          </Routes>
+              <Route path='/login' element={<Login />}></Route>
+              <Route path='/register' element={<Register />}></Route>
+              <Route path='/shop' element={<Shop />}></Route>
+              <Route path='/about' element={<About />} ></Route>
+              <Route path='/cart' element={<Cart />}></Route>
+              <Route path='/favorites' element={<Favorites />} ></Route>
+              <Route path='/myaccount' element={<Myaccount />}></Route>
+              <Route path='/changepwd' element={<Changepwd />}></Route>
+              <Route path='/historypays' element={<Historypays />} />
+            </Routes>
 
-      </Router>
-      </Favoriteprovider>
-    </Cartprovider>
-  </Authprovider>
+          </Router>
+        </Favoriteprovider>
+      </Cartprovider>
+    </Authprovider>
 
   )
 }

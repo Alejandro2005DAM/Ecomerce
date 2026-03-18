@@ -14,10 +14,16 @@ const productschema = new mongoose.Schema({
     cant: {
         type: Number,
 
+    },
+    precio: {
+        type: mongoose.Schema.Types.Double,
+
     }
 
 },
-    { timestamps: true })
+    {
+        timestamps: true
+    })
 
 
 

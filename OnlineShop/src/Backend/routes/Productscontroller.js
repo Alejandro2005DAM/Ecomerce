@@ -2,13 +2,11 @@ import Products from "../models/Products.js";
 import Users from "../models/Users.js";
 import express from 'express'
 import router from "./Userscontroller.js";
-import { User } from "lucide-react";
-
+// gestiona los productos que hay en el carrito
 const routerproducts = express.Router()
-
 routerproducts.post('/addproduct', async (req, res) => {
     try {
-        const { username, nombre, descripcion, cant } = req.body
+        const { username, nombre, descripcion, precio, cant } = req.body
 
 
         if (!nombre || !descripcion || !cant) {
@@ -34,7 +32,7 @@ routerproducts.post('/addproduct', async (req, res) => {
         let product
         const hasproduct = existuser.products.some(item => item.nombre === nombre)
         if (!hasproduct) {
-            product = await Products.create({ nombre, descripcion, cant })
+            product = await Products.create({ nombre, descripcion, precio, cant })
             existuser = await Users.findOneAndUpdate({ username: username },
                 {
                     $push: {
@@ -135,6 +133,7 @@ routerproducts.post('/incrementcant', async (req, res) => {
                 message: 'data required'
             })
         }
+        const priceproduct = await Products.findOne({ nombre })
         let existuser = await Users.findOne({ username }).populate('products')
 
         const hasproduct = existuser.products.some(item => item.nombre === nombre)
@@ -142,8 +141,9 @@ routerproducts.post('/incrementcant', async (req, res) => {
         if (hasproduct) {
             product = await Products.findOneAndUpdate({ nombre: nombre },
                 {
-                    $inc: { cant: cant }
-                }
+                    $inc: { cant: cant, precio: priceproduct.precio }
+                },
+
 
             )
         } else {
@@ -174,11 +174,12 @@ router.delete('/decrementcant', async (req, res) => {
         const hasproduct = existuser.products.some(item => item.nombre === nombre)
         const quantity = existuser.products.find(item => item.nombre === nombre)
         let product
+        const priceproduct = await Products.findOne({ nombre })
         if (hasproduct) {
 
             if (quantity.cant > 1) {
                 product = await Products.findOneAndUpdate({ nombre: nombre }, {
-                    $inc: { cant: -1 }
+                    $inc: { cant: -1, precio: -priceproduct.precio }
                 }, { new: true })
             } else {
                 const remove = existuser.products.find(item => item.nombre === nombre)
