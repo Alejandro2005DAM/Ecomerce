@@ -2,6 +2,8 @@ import express from 'express'
 import Payments from '../models/Payments.js'
 import Users from '../models/Users.js'
 import Products from '../models/Products.js'
+import { User } from 'lucide-react'
+import { message } from 'antd'
 // gestiona los pagos   
 const routerpayments = express.Router()
 
@@ -80,19 +82,27 @@ routerpayments.get('/getallpayments/:username', async (req, res) => {
     try {
         const { username } = req.params
 
-        const listpayments = await Payments.find({ username: username }).populate('products')
-        return res.status(200).json(listpayments.map(item => {
+
+        const existuser = await Users.findOne({ username })
+        if (!existuser) {
+            return res.status(400).json({
+                message: 'user don´t exist'
+            })
+        }
+        const listpayments = await Payments.find({ username: username })
+        res.status(200).json(listpayments.map(item => {
             return {
                 usrname: item.username,
                 total: item.total,
                 orderid: item.orderid,
                 products: item.products.map(item => {
                     return {
-                        name: item.nombre,
-                        price: item.precio,
+                        name: item.name,
+                        price: item.price,
                         cant: item.cant
                     }
                 }),
+                date: item.createdAt,
                 message: 'all of payments listed succesfully'
 
             }
@@ -104,5 +114,29 @@ routerpayments.get('/getallpayments/:username', async (req, res) => {
         })
     }
 
+})
+
+routerpayments.delete('/deletepayment', async (req, res) => {
+
+
+    try {
+        const { orderid } = req.body
+        const existpayment = await Payments.findOne({ orderid })
+        if (!existpayment) {
+            return res.status(400).json({
+                message: 'orderid doesn `t exist'
+            })
+        }
+        const remove = await Payments.deleteOne({ orderid })
+
+        res.status(200).json({
+            oderid: remove.orderid,
+            message: 'payment deleted'
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error
+        })
+    }
 })
 export default routerpayments

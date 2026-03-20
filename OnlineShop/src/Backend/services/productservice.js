@@ -43,6 +43,20 @@ export const productservice = {
         } catch (error) {
             console.log(error.response.data)
         }
+    }, 
+    ondecrement : async()=>{
+
+        try {
+             const res = axios.delete('http://localhost:3000/api/auth/decrementcant', {
+
+                data: {
+                    username: username,
+                    nombre: product.nombre,
+                }
+            })
+        } catch (error) {
+            console.log(error.response.data)
+        }
     }
 
 }
