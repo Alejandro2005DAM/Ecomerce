@@ -2,6 +2,7 @@ import Products from "../models/Products.js";
 import Users from "../models/Users.js";
 import express from 'express'
 import router from "./Userscontroller.js";
+import { message } from "antd";
 // gestiona los productos que hay en el carrito
 const routerproducts = express.Router()
 routerproducts.post('/addproduct', async (req, res) => {
@@ -213,6 +214,32 @@ router.delete('/decrementcant', async (req, res) => {
     }
 
 })
+//borra todos los productos del carrito cuando se cancela el pago
+routerproducts.delete('/clearcart', async (req, res) => {
+    try {
+        const { username } = req.body
 
+        const existuser = await Users.findOne({ username }).populate('products')
+        if (!existuser) {
+            return res.status(400).json({
+                message: 'user not found'
+            })
+        }
+        const listproducts = existuser.products.map(p => p._id)
+        await Users.findOneAndUpdate({ username: username },
+            { $set: { products: [] } }, { new: true }
+        )
+        await Products.deleteMany({ _id: listproducts })
+
+        res.status(200).json({
+            message: 'cart has been cleared'
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error
+        })
+    }
+})
 
 export default routerproducts
